@@ -13,7 +13,7 @@ export function trimSymbols(string, size) {
   let prevChar;
   let sameCharCount = 0;
 
-  for (let char of string) {
+  for (const char of string) {
     if (char !== prevChar) {
       result += char;
 

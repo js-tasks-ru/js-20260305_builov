@@ -72,4 +72,10 @@ module.exports = {
     'no-this-before-super': 'warn',
     'no-var': 'warn',
   },
+  overrides: [
+    {
+      files: ['*.ts'],
+      parser: "@typescript-eslint/parser",
+    }
+  ]
 };

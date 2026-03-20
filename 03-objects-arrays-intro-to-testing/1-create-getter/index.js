@@ -10,10 +10,13 @@ export function createGetter(path) {
     let current = obj;
 
     for (const prop of propsArr) {
-      if (current === null || current === undefined || typeof current[prop] === 'function') {
+      if (current === null || current === undefined) {
         return undefined;
       }
-      current = current[prop];
+
+      if (Object.hasOwn(current, prop)) {
+        current = current[prop];
+      }
     }
 
     return current;
