@@ -10,12 +10,10 @@ export function createGetter(path) {
     let current = obj;
 
     for (const prop of propsArr) {
-      if (current === null || current === undefined) {
-        return undefined;
-      }
-
       if (Object.hasOwn(current, prop)) {
         current = current[prop];
+      } else {
+        return undefined;
       }
     }
 
