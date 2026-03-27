@@ -1,11 +1,12 @@
 <!doctype html>
 <meta charset="UTF-8">
+<title>Notification</title>
+<link rel="stylesheet" type="text/css" href="style.css">
 
-<head>
-  <link rel="stylesheet" type="text/css" href="style.css">
-</head>
-
-<button id="btn1">Show simple message!</button>
+<body>
+<div style="position: fixed; top: 0; right: 0;">
+  <button id="btn1">Show simple message!</button>
+</div>
 
 <script type="module">
   import NotificationMessage from './index.ts';
@@ -19,3 +20,6 @@
     notification.show();
   });
 </script>
+
+</body>
+</html>
