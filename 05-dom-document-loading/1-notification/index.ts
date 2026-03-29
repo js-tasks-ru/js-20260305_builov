@@ -9,28 +9,26 @@ export default class NotificationMessage {
   public duration: number;
   public type: string;
   public message: string;
-  static activeNotification: NotificationMessage;
-  private timer: number | undefined;
-  public element: HTMLElement | undefined;
+  static activeNotification: NotificationMessage | undefined;
+  private timer: number = 0;
+  private element: HTMLElement;
 
-  constructor(message: string, {duration, type}: Options = {duration: 0, type: 'success'}) {
+  constructor(message: string, {duration, type}: Options) {
     if (NotificationMessage.activeNotification) {
-      NotificationMessage.activeNotification.destroy();
+      this.destroy();
     }
 
-    this.duration = duration;
-    this.type = type;
+    this.duration = (duration) ? duration : 2000;
+    this.type = (type) ? type : 'success';
     this.message = message;
 
     NotificationMessage.activeNotification = this;
   }
 
   public show(target?: HTMLElement): void {
-    console.log('show ', this.duration);
-
     const containerElement = (target) ? target : document.body;
 
-    const html = `<div class="notification success" style="--value:${this.duration}ms">
+    const html = `<div class="notification ${this.type}" style="--value:${this.duration}ms">
                         <div class="timer"></div>
                         <div class="inner-wrapper">
                           <div class="notification-header">${this.type}</div>
@@ -40,30 +38,25 @@ export default class NotificationMessage {
                         </div>
                       </div>`;
 
-    containerElement.insertAdjacentHTML('beforeend', html);
+    this.element = createElement(html);
+    containerElement.append(this.element);
 
     this.timer = setTimeout(() => {
-      this.destroy();
+      this.remove();
 
     }, this.duration);
   }
 
   public remove(): void {
-    console.log('call remove');
-
-    const element = <HTMLElement>document.querySelector('.notification');
-
-    if (element) {
-      element.remove();
+    if (this.element) {
+      this.element.remove();
     }
   }
 
   public destroy(): void {
-    console.log('call destroy');
+    clearTimeout(this.timer);
 
     const element = <HTMLElement>document.querySelector('.notification');
-
-    clearTimeout(this.timer);
 
     if (element) {
       element.remove();
