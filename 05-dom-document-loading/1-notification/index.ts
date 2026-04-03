@@ -1,21 +1,22 @@
 import { createElement } from "../../shared/utils/create-element";
 
 interface Options {
-  duration: number,
-  type: 'success' | 'error'
+  duration?: number,
+  type?: 'success' | 'error'
 }
 
 export default class NotificationMessage {
   public duration: number;
   public type: string;
   public message: string;
-  static activeNotification: NotificationMessage;
-  private timer: number | undefined;
+  static activeNotification: NotificationMessage | undefined;
+  private timer: number = 0;
   public element: HTMLElement | undefined;
+  private containerElement: HTMLElement | undefined;
 
-  constructor(message: string, {duration, type}: Options = {duration: 0, type: 'success'}) {
+  constructor(message: string, { duration = 2000, type = 'success' }: Options = {}) {
     if (NotificationMessage.activeNotification) {
-      NotificationMessage.activeNotification.destroy();
+      NotificationMessage.activeNotification?.destroy();
     }
 
     this.duration = duration;
@@ -26,11 +27,15 @@ export default class NotificationMessage {
   }
 
   public show(target?: HTMLElement): void {
-    console.log('show ', this.duration);
+    // const containerElement = (target) ? document.appendChild(target) : document.body;
 
-    const containerElement = (target) ? target : document.body;
+    if (target) {
+      this.containerElement = target;
 
-    const html = `<div class="notification success" style="--value:${this.duration}ms">
+      document.body.append(this.containerElement);
+    }
+
+    const html = `<div class="notification ${this.type}" style="--value:${this.duration / 1000}s">
                         <div class="timer"></div>
                         <div class="inner-wrapper">
                           <div class="notification-header">${this.type}</div>
@@ -40,33 +45,34 @@ export default class NotificationMessage {
                         </div>
                       </div>`;
 
-    containerElement.insertAdjacentHTML('beforeend', html);
+    this.element = createElement(html);
+
+    if (this.containerElement) {
+      this.containerElement.append(this.element);
+    } else {
+      document.body.append(this.element);
+    }
 
     this.timer = setTimeout(() => {
-      this.destroy();
+      this.remove();
 
     }, this.duration);
   }
 
   public remove(): void {
-    console.log('call remove');
-
-    const element = <HTMLElement>document.querySelector('.notification');
-
-    if (element) {
-      element.remove();
+    if (this.element) {
+      this.element.remove();
+    }
+    if (this.containerElement) {
+      this.containerElement.remove();
     }
   }
 
   public destroy(): void {
-    console.log('call destroy');
-
-    const element = <HTMLElement>document.querySelector('.notification');
-
     clearTimeout(this.timer);
 
-    if (element) {
-      element.remove();
-    }
+    this.remove();
+
+    NotificationMessage.activeNotification = undefined;
   }
 }
