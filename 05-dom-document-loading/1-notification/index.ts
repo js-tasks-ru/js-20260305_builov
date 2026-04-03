@@ -12,6 +12,7 @@ export default class NotificationMessage {
   static activeNotification: NotificationMessage | undefined;
   private timer: number = 0;
   public element: HTMLElement | undefined;
+  private containerElement: HTMLElement | undefined;
 
   constructor(message: string, { duration = 2000, type = 'success' }: Options = {}) {
     if (NotificationMessage.activeNotification) {
@@ -26,7 +27,13 @@ export default class NotificationMessage {
   }
 
   public show(target?: HTMLElement): void {
-    const containerElement = (target) ? target : document.body;
+    // const containerElement = (target) ? document.appendChild(target) : document.body;
+
+    if (target) {
+      this.containerElement = target;
+
+      document.body.append(this.containerElement);
+    }
 
     const html = `<div class="notification ${this.type}" style="--value:${this.duration / 1000}s">
                         <div class="timer"></div>
@@ -39,7 +46,12 @@ export default class NotificationMessage {
                       </div>`;
 
     this.element = createElement(html);
-    containerElement.append(this.element);
+
+    if (this.containerElement) {
+      this.containerElement.append(this.element);
+    } else {
+      document.body.append(this.element);
+    }
 
     this.timer = setTimeout(() => {
       this.remove();
@@ -51,17 +63,16 @@ export default class NotificationMessage {
     if (this.element) {
       this.element.remove();
     }
+    if (this.containerElement) {
+      this.containerElement.remove();
+    }
   }
 
   public destroy(): void {
     clearTimeout(this.timer);
 
+    this.remove();
+
     NotificationMessage.activeNotification = undefined;
-
-    const element = <HTMLElement>document.querySelector('.notification');
-
-    if (element) {
-      element.remove();
-    }
   }
 }
