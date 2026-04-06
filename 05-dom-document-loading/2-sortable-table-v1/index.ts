@@ -13,7 +13,7 @@ interface SortableTableHeader {
 }
 
 export default class SortableTable {
-  private tableElement: HTMLElement | null = null;
+  private tableElement: HTMLElement | null;
 
   private headersConfig: SortableTableHeader[];
   private data: SortableTableData[];
@@ -21,9 +21,10 @@ export default class SortableTable {
   constructor(headersConfig: SortableTableHeader[] = [], data: SortableTableData[] = []) {
     this.headersConfig = headersConfig;
     this.data = data;
+    this.tableElement = this.buildTableElement();
   }
 
-  public get element() {
+  private buildTableElement(): HTMLElement {
     const header = this.headersConfig
       .map(header => `
                  <div class="sortable-table__cell" data-id="${header.id}" data-sortable="${header.sortable}">
@@ -51,8 +52,10 @@ export default class SortableTable {
       </div>
     </div>`;
 
-    this.tableElement = createElement(html);
+    return createElement(html);
+  }
 
+  public get element() {
     return this.tableElement;
   }
 
@@ -97,7 +100,11 @@ export default class SortableTable {
 
     this.headersConfig.forEach((item) => {
       if (item.id === field) {
-        const headerElement = document.querySelector(`[data-id="${field}"]`);
+        if (this.tableElement) {
+          const headerElement = this.tableElement.querySelector(`[data-id="${field}"]`);
+        } else {
+          new Error('Таблица не найдена.');
+        }
 
         if (headerElement) {
           headerElement.setAttribute('data-order', order);
