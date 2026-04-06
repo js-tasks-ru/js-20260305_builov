@@ -27,8 +27,6 @@ export default class NotificationMessage {
   }
 
   public show(target?: HTMLElement): void {
-    // const containerElement = (target) ? document.appendChild(target) : document.body;
-
     if (target) {
       this.containerElement = target;
 
@@ -63,15 +61,16 @@ export default class NotificationMessage {
     if (this.element) {
       this.element.remove();
     }
-    if (this.containerElement) {
-      this.containerElement.remove();
-    }
   }
 
   public destroy(): void {
     clearTimeout(this.timer);
 
     this.remove();
+
+    if (this.containerElement) {
+      this.containerElement.remove();
+    }
 
     NotificationMessage.activeNotification = undefined;
   }
