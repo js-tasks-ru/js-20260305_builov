@@ -9,9 +9,9 @@ export default class NotificationMessage {
   public duration: number;
   public type: string;
   public message: string;
-  static activeNotification: NotificationMessage | undefined;
+  static activeNotification: NotificationMessage | null;
   private timer: number = 0;
-  public element: HTMLElement | undefined;
+  public element!: HTMLElement;
   private containerElement: HTMLElement | undefined;
 
   constructor(message: string, { duration = 2000, type = 'success' }: Options = {}) {
@@ -68,10 +68,6 @@ export default class NotificationMessage {
 
     this.remove();
 
-    if (this.containerElement) {
-      this.containerElement.remove();
-    }
-
-    NotificationMessage.activeNotification = undefined;
+    NotificationMessage.activeNotification = null;
   }
 }
